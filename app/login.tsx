@@ -1,17 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 // --- API Types ---
@@ -23,7 +24,6 @@ type LoginResponse = {
     name: string;
     username: string;
     phoneNumber: string;
-    createdAt: string;
   };
 };
 
@@ -39,6 +39,7 @@ type FormData = {
 
 // --- Main component ---
 const RegisterLoginScreen: React.FC = () => {
+  const router = useRouter();
   // Toggle between register and login tabs
   const [isRegister, setIsRegister] = useState<boolean>(true);
   // Flag to know if user has an existing session
@@ -72,13 +73,18 @@ const RegisterLoginScreen: React.FC = () => {
 
   // API calls
   const registerUser = async (data: FormData): Promise<LoginResponse> => {
-    // TODO: Replace with your actual API endpoint
-    const response = await fetch('YOUR_API_URL/register', {
+    const response = await fetch('https://us-central1-metroapp-56fb6.cloudfunctions.net/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        username: data.username,
+        phoneNumber: data.phoneNumber
+      }),
     });
 
     if (!response.ok) {
@@ -90,8 +96,7 @@ const RegisterLoginScreen: React.FC = () => {
   };
 
   const loginUser = async (data: FormData): Promise<LoginResponse> => {
-    // TODO: Replace with your actual API endpoint
-    const response = await fetch('YOUR_API_URL/login', {
+    const response = await fetch('https://us-central1-metroapp-56fb6.cloudfunctions.net/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -130,8 +135,8 @@ const RegisterLoginScreen: React.FC = () => {
       } else {
         response = await loginUser(data);
         await saveSession(response.token);
-        // TODO: Navigate to home screen
-        console.log('Navigate to Home');
+        // Navigate to success screen
+        router.replace('/success');
       }
     } catch (error) {
       Alert.alert(
@@ -150,8 +155,8 @@ const RegisterLoginScreen: React.FC = () => {
         promptMessage: 'Autentícate',
       });
       if (result.success) {
-        // Biometric successful: navigate to Home
-        console.log('Biometric OK, navigate to Home');
+        // Navigate to success screen
+        router.replace('/success');
       }
     } catch (e) {
       console.warn('Biometric error', e);

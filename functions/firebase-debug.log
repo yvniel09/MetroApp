@@ -1,0 +1,346 @@
+[debug] [2025-05-12T12:45:12.498Z] ----------------------------------------------------------------------
+[debug] [2025-05-12T12:45:12.500Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\yunie\ProyectoFinalADM\MetroApp\functions\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2025-05-12T12:45:12.500Z] CLI Version:   14.3.1
+[debug] [2025-05-12T12:45:12.500Z] Platform:      win32
+[debug] [2025-05-12T12:45:12.500Z] Node Version:  v20.9.0
+[debug] [2025-05-12T12:45:12.500Z] Time:          Mon May 12 2025 08:45:12 GMT-0400 (hora estándar del Atlántico)
+[debug] [2025-05-12T12:45:12.501Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-12T12:45:12.647Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-12T12:45:12.647Z] > authorizing via signed-in user (yunielherrera2008@gmail.com)
+[debug] [2025-05-12T12:45:12.648Z] [iam] checking project metroapp-56fb6 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-05-12T12:45:12.648Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:12.649Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:12.649Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions [none]
+[debug] [2025-05-12T12:45:12.649Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:12.650Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-05-12T12:45:12.889Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions 200
+[debug] [2025-05-12T12:45:12.889Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-05-12T12:45:12.890Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:12.890Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:12.890Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-05-12T12:45:12.890Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-05-12T12:45:13.102Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-05-12T12:45:13.102Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'metroapp-56fb6'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script. 
+[debug] [2025-05-12T12:45:15.419Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.419Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.420Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2025-05-12T12:45:15.420Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:15.858Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com 200
+[debug] [2025-05-12T12:45:15.858Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2025-05-12T12:45:15.858Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.859Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.859Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6 [none]
+[debug] [2025-05-12T12:45:15.969Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6 200
+[debug] [2025-05-12T12:45:15.969Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6 {"projectNumber":"602297400143","projectId":"metroapp-56fb6","lifecycleState":"ACTIVE","name":"MetroApp","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-05-01T13:16:35.991031Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-05-12T12:45:15.971Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.971Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.971Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.971Z] Checked if tokens are valid: true, expires at: 1747056669909
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-05-12T12:45:15.972Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.972Z] Checked if tokens are valid: true, expires at: 1747056669909
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-05-12T12:45:15.972Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.972Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:15.972Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-05-12T12:45:15.972Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:15.973Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-05-12T12:45:15.973Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:15.974Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com [none]
+[debug] [2025-05-12T12:45:15.974Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:15.976Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com [none]
+[debug] [2025-05-12T12:45:15.976Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:16.313Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com 200
+[debug] [2025-05-12T12:45:16.314Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-05-12T12:45:16.367Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com 200
+[debug] [2025-05-12T12:45:16.368Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2025-05-12T12:45:16.383Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com 200
+[debug] [2025-05-12T12:45:16.383Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2025-05-12T12:45:16.401Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com 200
+[debug] [2025-05-12T12:45:16.401Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-05-12T12:45:16.401Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:16.401Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:16.401Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/metroapp-56fb6/adminSdkConfig [none]
+[debug] [2025-05-12T12:45:16.804Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/metroapp-56fb6/adminSdkConfig 200
+[debug] [2025-05-12T12:45:16.804Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/metroapp-56fb6/adminSdkConfig {"projectId":"metroapp-56fb6","storageBucket":"metroapp-56fb6.firebasestorage.app"}
+[debug] [2025-05-12T12:45:16.804Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:16.804Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:16.804Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs [none]
+[debug] [2025-05-12T12:45:17.306Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs 200
+[debug] [2025-05-12T12:45:17.306Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs {"configs":[{"name":"projects/metroapp-56fb6/configs/api"},{"name":"projects/metroapp-56fb6/configs/auth"}]}
+[debug] [2025-05-12T12:45:17.306Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.306Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.306Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.306Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.306Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables [none]
+[debug] [2025-05-12T12:45:17.307Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables [none]
+[debug] [2025-05-12T12:45:17.446Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables 200
+[debug] [2025-05-12T12:45:17.446Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables {"variables":[{"name":"projects/metroapp-56fb6/configs/api/variables/key","updateTime":"2025-05-12T12:44:45.065682863Z"}]}
+[debug] [2025-05-12T12:45:17.446Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.446Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.446Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables/key [none]
+[debug] [2025-05-12T12:45:17.516Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables 200
+[debug] [2025-05-12T12:45:17.517Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables {"variables":[{"name":"projects/metroapp-56fb6/configs/auth/variables/api_key","updateTime":"2025-05-12T05:17:01.647352368Z"}]}
+[debug] [2025-05-12T12:45:17.517Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.517Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:17.517Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables/api_key [none]
+[debug] [2025-05-12T12:45:17.745Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables/key 200
+[debug] [2025-05-12T12:45:17.745Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables/key {"name":"projects/metroapp-56fb6/configs/api/variables/key","updateTime":"2025-05-12T12:44:45.065682863Z","text":"AIzaSyCmzje-Px_70ePgQY4tOVX5KxL0okyeUN8"}
+[debug] [2025-05-12T12:45:17.794Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables/api_key 200
+[debug] [2025-05-12T12:45:17.794Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables/api_key {"name":"projects/metroapp-56fb6/configs/auth/variables/api_key","updateTime":"2025-05-12T05:17:01.647352368Z","text":"AIzaSyCmzje-Px_70ePgQY4tOVX5KxL0okyeUN8"}
+[debug] [2025-05-12T12:45:17.796Z] Validating nodejs source
+[debug] [2025-05-12T12:45:18.878Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^6.3.2",
+    "firebase-tools": "^14.3.1",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.3.3"
+  },
+  "private": true
+}
+[debug] [2025-05-12T12:45:18.879Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-05-12T12:45:18.880Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-05-12T12:45:18.885Z] Found firebase-functions binary at 'C:\Users\yunie\ProyectoFinalADM\MetroApp\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8749
+
+[debug] [2025-05-12T12:45:19.344Z] Got response from /__/functions.yaml {"endpoints":{"api":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"api"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-05-12T12:45:24.367Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:24.367Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:24.368Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-05-12T12:45:24.368Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:24.797Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com 200
+[debug] [2025-05-12T12:45:24.797Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com [omitted]
+[info] +  extensions: required API firebaseextensions.googleapis.com is enabled 
+[debug] [2025-05-12T12:45:24.798Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-12T12:45:24.798Z] > authorizing via signed-in user (yunielherrera2008@gmail.com)
+[debug] [2025-05-12T12:45:24.798Z] [iam] checking project metroapp-56fb6 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-05-12T12:45:24.798Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:24.798Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:24.798Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions [none]
+[debug] [2025-05-12T12:45:24.798Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:45:24.798Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-05-12T12:45:24.999Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions 200
+[debug] [2025-05-12T12:45:24.999Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-05-12T12:45:25.000Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:25.000Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:45:25.000Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/metroapp-56fb6/instances pageSize=100&pageToken=
+[debug] [2025-05-12T12:45:25.384Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/metroapp-56fb6/instances 200
+[debug] [2025-05-12T12:45:25.384Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/metroapp-56fb6/instances {}
+[debug] [2025-05-12T12:45:25.385Z] Failed to validate key FIREBASE_API_KEY: Error: Key FIREBASE_API_KEY starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] Error: Failed to load environment variables from .env.:
+[error] - Error Key FIREBASE_API_KEY starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-05-12T12:46:59.758Z] ----------------------------------------------------------------------
+[debug] [2025-05-12T12:46:59.760Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\yunie\ProyectoFinalADM\MetroApp\functions\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2025-05-12T12:46:59.760Z] CLI Version:   14.3.1
+[debug] [2025-05-12T12:46:59.760Z] Platform:      win32
+[debug] [2025-05-12T12:46:59.761Z] Node Version:  v20.9.0
+[debug] [2025-05-12T12:46:59.761Z] Time:          Mon May 12 2025 08:46:59 GMT-0400 (hora estándar del Atlántico)
+[debug] [2025-05-12T12:46:59.761Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-12T12:46:59.900Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-12T12:46:59.900Z] > authorizing via signed-in user (yunielherrera2008@gmail.com)
+[debug] [2025-05-12T12:46:59.900Z] [iam] checking project metroapp-56fb6 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-05-12T12:46:59.901Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:46:59.901Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:46:59.902Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions [none]
+[debug] [2025-05-12T12:46:59.902Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:46:59.902Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-05-12T12:47:00.141Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions 200
+[debug] [2025-05-12T12:47:00.141Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-05-12T12:47:00.142Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:00.142Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:00.142Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-05-12T12:47:00.142Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-05-12T12:47:00.367Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-05-12T12:47:00.367Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/metroapp-56fb6/serviceAccounts/metroapp-56fb6@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'metroapp-56fb6'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script. 
+[debug] [2025-05-12T12:47:02.462Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.462Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.462Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2025-05-12T12:47:02.462Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:02.859Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com 200
+[debug] [2025-05-12T12:47:02.859Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2025-05-12T12:47:02.859Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.860Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.860Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6 [none]
+[debug] [2025-05-12T12:47:02.964Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6 200
+[debug] [2025-05-12T12:47:02.964Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6 {"projectNumber":"602297400143","projectId":"metroapp-56fb6","lifecycleState":"ACTIVE","name":"MetroApp","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-05-01T13:16:35.991031Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-05-12T12:47:02.965Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.966Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:02.966Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-05-12T12:47:02.966Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:02.967Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-05-12T12:47:02.967Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:02.968Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com [none]
+[debug] [2025-05-12T12:47:02.968Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:02.970Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com [none]
+[debug] [2025-05-12T12:47:02.970Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:03.287Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com 200
+[debug] [2025-05-12T12:47:03.287Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-05-12T12:47:03.344Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com 200
+[debug] [2025-05-12T12:47:03.344Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-05-12T12:47:03.351Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com 200
+[debug] [2025-05-12T12:47:03.351Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2025-05-12T12:47:03.382Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com 200
+[debug] [2025-05-12T12:47:03.382Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2025-05-12T12:47:03.383Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:03.383Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:03.383Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/metroapp-56fb6/adminSdkConfig [none]
+[debug] [2025-05-12T12:47:03.791Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/metroapp-56fb6/adminSdkConfig 200
+[debug] [2025-05-12T12:47:03.791Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/metroapp-56fb6/adminSdkConfig {"projectId":"metroapp-56fb6","storageBucket":"metroapp-56fb6.firebasestorage.app"}
+[debug] [2025-05-12T12:47:03.791Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:03.791Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:03.791Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs [none]
+[debug] [2025-05-12T12:47:04.145Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs 200
+[debug] [2025-05-12T12:47:04.145Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs {"configs":[{"name":"projects/metroapp-56fb6/configs/auth"},{"name":"projects/metroapp-56fb6/configs/api"}]}
+[debug] [2025-05-12T12:47:04.146Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.146Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.146Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.146Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.146Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables [none]
+[debug] [2025-05-12T12:47:04.146Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables [none]
+[debug] [2025-05-12T12:47:04.430Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables 200
+[debug] [2025-05-12T12:47:04.430Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables {"variables":[{"name":"projects/metroapp-56fb6/configs/auth/variables/api_key","updateTime":"2025-05-12T05:17:01.647352368Z"}]}
+[debug] [2025-05-12T12:47:04.430Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.430Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.430Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables/api_key [none]
+[debug] [2025-05-12T12:47:04.477Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables 200
+[debug] [2025-05-12T12:47:04.477Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables {"variables":[{"name":"projects/metroapp-56fb6/configs/api/variables/key","updateTime":"2025-05-12T12:44:45.065682863Z"}]}
+[debug] [2025-05-12T12:47:04.477Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.477Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:04.477Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables/key [none]
+[debug] [2025-05-12T12:47:04.700Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables/api_key 200
+[debug] [2025-05-12T12:47:04.700Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/auth/variables/api_key {"name":"projects/metroapp-56fb6/configs/auth/variables/api_key","updateTime":"2025-05-12T05:17:01.647352368Z","text":"AIzaSyCmzje-Px_70ePgQY4tOVX5KxL0okyeUN8"}
+[debug] [2025-05-12T12:47:04.778Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables/key 200
+[debug] [2025-05-12T12:47:04.778Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/metroapp-56fb6/configs/api/variables/key {"name":"projects/metroapp-56fb6/configs/api/variables/key","updateTime":"2025-05-12T12:44:45.065682863Z","text":"AIzaSyCmzje-Px_70ePgQY4tOVX5KxL0okyeUN8"}
+[debug] [2025-05-12T12:47:04.779Z] Validating nodejs source
+[debug] [2025-05-12T12:47:05.791Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^6.3.2",
+    "firebase-tools": "^14.3.1",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.3.3"
+  },
+  "private": true
+}
+[debug] [2025-05-12T12:47:05.791Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-05-12T12:47:05.792Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-05-12T12:47:05.798Z] Found firebase-functions binary at 'C:\Users\yunie\ProyectoFinalADM\MetroApp\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8382
+
+[debug] [2025-05-12T12:47:06.279Z] Got response from /__/functions.yaml {"endpoints":{"api":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"api"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-05-12T12:47:11.303Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:11.304Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:11.304Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-05-12T12:47:11.304Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:11.655Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com 200
+[debug] [2025-05-12T12:47:11.655Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/metroapp-56fb6/services/firebaseextensions.googleapis.com [omitted]
+[info] +  extensions: required API firebaseextensions.googleapis.com is enabled 
+[debug] [2025-05-12T12:47:11.655Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-12T12:47:11.656Z] > authorizing via signed-in user (yunielherrera2008@gmail.com)
+[debug] [2025-05-12T12:47:11.656Z] [iam] checking project metroapp-56fb6 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-05-12T12:47:11.656Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:11.656Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:11.656Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions [none]
+[debug] [2025-05-12T12:47:11.656Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions x-goog-quota-user=projects/metroapp-56fb6
+[debug] [2025-05-12T12:47:11.656Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-05-12T12:47:11.906Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions 200
+[debug] [2025-05-12T12:47:11.906Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/metroapp-56fb6:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-05-12T12:47:11.907Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:11.907Z] Checked if tokens are valid: true, expires at: 1747056669909
+[debug] [2025-05-12T12:47:11.907Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/metroapp-56fb6/instances pageSize=100&pageToken=
+[debug] [2025-05-12T12:47:12.291Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/metroapp-56fb6/instances 200
+[debug] [2025-05-12T12:47:12.291Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/metroapp-56fb6/instances {}
+[debug] [2025-05-12T12:47:12.292Z] Failed to validate key FIREBASE_API_KEY: Error: Key FIREBASE_API_KEY starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] Error: Failed to load environment variables from .env.:
+[error] - Error Key FIREBASE_API_KEY starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
