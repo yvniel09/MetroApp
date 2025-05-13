@@ -1,108 +1,103 @@
 import 'dotenv/config';
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import fetch from 'node-fetch';
 
-// Inicializa la app de Firebase Admin
+// Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.firestore();
 
-// Configura Express
+// Configure Express app
 const app = express();
 app.use(express.json());
 
-// Health check endpoint
+// Health check endpoint (public)
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).send('OK');
+  return res.status(200).send('OK');
 });
 
-// Ruta de registro de usuario
+// User registration endpoint (public)
 app.post('/register', async (req: Request, res: Response) => {
+  // 1. Basic input validation
+  const { email, password, name, username, phoneNumber } = req.body as {
+    email: string;
+    password: string;
+    name: string;
+    username: string;
+    phoneNumber: string;
+  };
+  
+  if (!email || !password || !name || !username || !phoneNumber) {
+    return res.status(400).json({ message: 'Todos los campos son requeridos' });
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: 'Formato de email inválido' });
+  }
+  
+  if (password.length < 6) {
+    return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
+  }
+
+  // 2. Check for duplicates
+  const existing = await db.collection('users').where('email', '==', email).limit(1).get();
+  if (!existing.empty) {
+    return res.status(409).json({ message: 'El usuario ya existe' });
+  }
+
+  let uid: string | null = null;
   try {
-    const { email, password, name, username, phoneNumber } = req.body as {
-      email: string;
-      password: string;
-      name: string;
-      username: string;
-      phoneNumber: string;
-    };
-
-    // Validar datos requeridos
-    if (!email || !password || !name || !username || !phoneNumber) {
-      return res.status(400).json({ 
-        message: 'Todos los campos son requeridos' 
-      });
-    }
-
-    // Verificar si el usuario ya existe
-    const usersRef = db.collection('users');
-    const snapshot = await usersRef.where('email', '==', email).get();
-    
-    if (!snapshot.empty) {
-      return res.status(400).json({ 
-        message: 'El usuario ya existe' 
-      });
-    }
-
-    // Crear usuario en Firebase Auth
-    const userRecord = await admin.auth().createUser({ 
-      email, 
+    // 3. Create in Auth
+    const userRecord = await admin.auth().createUser({
+      email,
       password,
-      displayName: name
+      displayName: name,
     });
-    const uid = userRecord.uid;
+    uid = userRecord.uid;
 
-    // Crear timestamp
-    const now = new Date();
-
-    // Guardar datos en Firestore
+    // 4. Save to Firestore
     await db.collection('users').doc(uid).set({
       email,
       name,
       username,
       phoneNumber,
       state: 'active',
-      creation_date: now,
-      last_access: now,
+      creation_date: admin.firestore.FieldValue.serverTimestamp(),
+      last_access: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    // Obtener token de ID usando Firebase Auth REST API
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error('Firebase API key no configurada');
+    // 5. Respond without token; client will handle login
+    return res.status(201).json({
+      message: 'Usuario creado correctamente',
+      user: { uid, email, name, username, phoneNumber }
+    });
+
+  } catch (err: any) {
+    console.error('Error en /register:', err);
+
+    // 6. Rollback in case of partial failure
+    if (uid) {
+      try {
+        await admin.auth().deleteUser(uid);
+        await db.collection('users').doc(uid).delete();
+      } catch (cleanupErr) {
+        console.error('Error limpiando datos tras fallo de registro:', cleanupErr);
+      }
     }
 
-    const resp = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, returnSecureToken: true }),
-      }
-    );
-    const data = await resp.json();
-    if (data.error) throw new Error(data.error.message);
-
-    return res.status(201).json({ 
-      token: data.idToken, 
-      user: { 
-        uid, 
-        email, 
-        name, 
-        username, 
-        phoneNumber 
-      } 
-    });
-  } catch (error: any) {
-    console.error('Error en /register:', error);
-    return res.status(400).json({ 
-      message: error.message || 'Error al registrar usuario' 
+    // 7. Generic error handling
+    const isAuthConflict = err.code === 'auth/email-already-exists';
+    return res.status(isAuthConflict ? 409 : 500).json({
+      message: isAuthConflict
+        ? 'El email ya está registrado'
+        : err.message || 'Error interno al registrar usuario'
     });
   }
 });
 
-// Ruta de login de usuario
+// User login endpoint (public)
 app.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as { 
@@ -110,19 +105,19 @@ app.post('/login', async (req: Request, res: Response) => {
       password: string 
     };
 
-    // Validar datos requeridos
+    // Validate required data
     if (!email || !password) {
       return res.status(400).json({ 
         message: 'Email y contraseña son requeridos' 
       });
     }
 
-    // Verificar credenciales con Firebase Auth REST API
+    // Verify credentials with Firebase Auth REST API
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
       throw new Error('Firebase API key no configurada');
     }
-
+    
     const resp = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
       {
@@ -131,21 +126,21 @@ app.post('/login', async (req: Request, res: Response) => {
         body: JSON.stringify({ email, password, returnSecureToken: true }),
       }
     );
+    
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message);
 
     const uid = data.localId;
 
-    // Verificar si el usuario existe en Firestore
+    // Verify if user exists in Firestore
     const userDoc = await db.collection('users').doc(uid).get();
     if (!userDoc.exists) {
       throw new Error('Usuario no encontrado en la base de datos');
     }
 
-    // Actualizar last_access en Firestore
-    const now = new Date();
+    // Update last_access in Firestore
     await db.collection('users').doc(uid).update({
-      last_access: now,
+      last_access: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     const userData = userDoc.data();
@@ -168,5 +163,163 @@ app.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-// Exponer Express como función HTTP
+// Authentication middleware for protected routes
+const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Authorization header faltante o inválido' });
+  }
+  
+  const idToken = auth.split('Bearer ')[1];
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    // Type assertion to add uid to request object
+    (req as any).uid = decoded.uid;
+    return next();
+  } catch (err) {
+    console.error('Token inválido:', err);
+    return res.status(401).json({ message: 'Token inválido' });
+  }
+};
+
+// Apply authentication middleware to all /tarjetas routes
+app.use('/tarjetas', authMiddleware);
+
+// Protected routes for tarjetas management
+// 1. Register a new card
+app.post('/tarjetas/registrar', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;
+    const { nfc_uid, sobrenombre, estado, saldo } = req.body;
+    
+    if (!nfc_uid || !sobrenombre || estado == null || saldo == null) {
+      return res.status(400).json({ message: 'Faltan campos requeridos' });
+    }
+    
+    const tarjetaRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .doc(nfc_uid);
+      
+    await tarjetaRef.set({
+      sobrenombre,
+      estado,
+      saldo,
+      creada: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    
+    return res.status(201).json({ message: 'Tarjeta registrada exitosamente' });
+  } catch (error: any) {
+    console.error('Error en /tarjetas/registrar:', error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 2. Get all cards for a user
+app.get('/tarjetas', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;
+    const snapshot = await db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .get();
+      
+    const tarjetas = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    return res.status(200).json({ tarjetas });
+  } catch (error: any) {
+    console.error('Error en /tarjetas:', error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 3. Edit card alias
+app.put('/tarjetas/editar', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;
+    const { nfc_uid, nuevo_alias } = req.body;
+    
+    if (!nfc_uid || !nuevo_alias) {
+      return res.status(400).json({ message: 'Campos requeridos faltantes' });
+    }
+    
+    const tarjetaRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .doc(nfc_uid);
+      
+    await tarjetaRef.update({ sobrenombre: nuevo_alias });
+    return res.status(200).json({ message: 'Tarjeta actualizada correctamente' });
+  } catch (error: any) {
+    console.error('Error en /tarjetas/editar:', error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 4. Recharge card
+app.post('/tarjetas/recargar', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;
+    const { nfc_uid, saldo } = req.body;
+    
+    if (!nfc_uid || saldo == null) {
+      return res.status(400).json({ message: 'Campos requeridos faltantes' });
+    }
+    
+    const tarjetaRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .doc(nfc_uid);
+      
+    await tarjetaRef.update({
+      saldo: admin.firestore.FieldValue.increment(saldo),
+    });
+    
+    return res.status(200).json({ message: 'Tarjeta recargada correctamente' });
+  } catch (error: any) {
+    console.error('Error en /tarjetas/recargar:', error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// 5. Use card (save transaction)
+app.post('/tarjetas/usar', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;
+    const { nfc_uid, saldo, estacion, hora } = req.body;
+    
+    if (!nfc_uid || saldo == null || !estacion || !hora) {
+      return res.status(400).json({ message: 'Campos requeridos faltantes' });
+    }
+    
+    const tarjetaRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .doc(nfc_uid);
+      
+    // Deduct balance
+    await tarjetaRef.update({
+      saldo: admin.firestore.FieldValue.increment(-saldo),
+    });
+    
+    // Record transaction
+    await tarjetaRef.collection('transacciones').add({
+      saldo,
+      estacion,
+      hora,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    
+    return res.status(200).json({ message: 'Uso de tarjeta registrado correctamente' });
+  } catch (error: any) {
+    console.error('Error en /tarjetas/usar:', error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+// Export Express app as Firebase Function
 export const api = functions.https.onRequest(app);
