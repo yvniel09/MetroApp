@@ -96,6 +96,51 @@ app.post('/register', async (req: Request, res: Response) => {
     });
   }
 });
+// Eliminar tarjeta NFC del usuario
+app.delete('/tarjetas/:nfc_uid', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;
+    const { nfc_uid } = req.params;
+
+    if (!uid) {
+      return res.status(401).json({ message: 'No autorizado: UID no encontrado' });
+    }
+
+    if (!nfc_uid) {
+      return res.status(400).json({ message: 'nfc_uid es requerido' });
+    }
+
+    const tarjetaRef = db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .doc(nfc_uid);
+
+    const tarjetaSnap = await tarjetaRef.get();
+
+    if (!tarjetaSnap.exists) {
+      return res.status(404).json({ message: 'Tarjeta no encontrada' });
+    }
+
+    // Eliminar transacciones asociadas (si existen)
+    const transaccionesSnap = await tarjetaRef.collection('transacciones').get();
+    const batch = db.batch();
+
+    transaccionesSnap.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    batch.delete(tarjetaRef);
+
+    await batch.commit();
+
+    return res.status(200).json({ message: 'Tarjeta eliminada exitosamente' });
+  } catch (error: any) {
+    console.error('Error en DELETE /tarjetas/:nfc_uid:', error);
+    return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+  }
+});
+
 
 // User login endpoint (public)
 app.post('/login', async (req: Request, res: Response) => {

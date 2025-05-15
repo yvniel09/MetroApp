@@ -102,33 +102,41 @@ const CardList: React.FC<Props> = ({ refreshSignal }) => {
   };
 
   // Eliminar tarjeta
-  const handleDelete = () => {
-    if (!tarjetaSeleccionada) return;
-    Alert.alert(
-      'Eliminar tarjeta',
-      '¿Seguro que quieres eliminar esta tarjeta?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const token = await AsyncStorage.getItem('userToken');
-              await axios.delete(
-                `https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/${tarjetaSeleccionada.id}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-              );
-              await fetchTarjetas();
-              closeModal();
-            } catch {
-              Alert.alert('Error', 'No se pudo eliminar la tarjeta.');
-            }
-          },
+const handleDelete = () => {
+  if (!tarjetaSeleccionada) return;
+
+  Alert.alert(
+    'Eliminar tarjeta',
+    '¿Seguro que quieres eliminar esta tarjeta?',
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const token = await AsyncStorage.getItem('userToken');
+            await axios.delete(
+              `https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/${tarjetaSeleccionada.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            await fetchTarjetas(); // Refrescar la lista después de eliminar
+            closeModal(); // Cerrar el modal
+          } catch (error) {
+            console.error('Error al eliminar tarjeta:', error);
+            Alert.alert('Error', 'No se pudo eliminar la tarjeta.');
+          }
         },
-      ]
-    );
-  };
+      },
+    ]
+  );
+};
+
+
 
   // Recargar saldo
   const handleRecarga = async () => {
