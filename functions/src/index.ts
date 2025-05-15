@@ -185,36 +185,52 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 // Apply authentication middleware to all /tarjetas routes
 app.use('/tarjetas', authMiddleware);
 
-// Protected routes for tarjetas management
-// 1. Register a new card
+// Registrar una tarjeta NFC en la colección del usuario
 app.post('/tarjetas/registrar', async (req: Request, res: Response) => {
   try {
     const uid = (req as any).uid;
     const { nfc_uid, sobrenombre, estado, saldo } = req.body;
-    
+
     if (!nfc_uid || !sobrenombre || estado == null || saldo == null) {
       return res.status(400).json({ message: 'Faltan campos requeridos' });
     }
-    
+
     const tarjetaRef = db
       .collection('users')
       .doc(uid)
       .collection('tarjetas')
       .doc(nfc_uid);
-      
+
+    const tarjetaDoc = await tarjetaRef.get();
+
+    if (tarjetaDoc.exists) {
+      return res.status(409).json({ message: 'Esta tarjeta ya fue registrada por este usuario' });
+    }
+
+    // Busca si esta tarjeta está registrada por otro usuario
+    const snapshot = await db.collectionGroup('tarjetas')
+      .where(admin.firestore.FieldPath.documentId(), '==', nfc_uid)
+      .get();
+
+    if (!snapshot.empty) {
+      return res.status(403).json({ message: 'Esta tarjeta ya fue registrada por otro usuario' });
+    }
+
     await tarjetaRef.set({
       sobrenombre,
       estado,
       saldo,
       creada: admin.firestore.FieldValue.serverTimestamp(),
     });
-    
+
     return res.status(201).json({ message: 'Tarjeta registrada exitosamente' });
   } catch (error: any) {
     console.error('Error en /tarjetas/registrar:', error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
+
+
 
 // 2. Get all cards for a user
 app.get('/tarjetas', async (req: Request, res: Response) => {
@@ -233,6 +249,46 @@ app.get('/tarjetas', async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 });
+app.get('/tarjetas/transacciones', async (req: Request, res: Response) => {
+  try {
+    const uid = (req as any).uid;  // Obtener el UID del usuario desde el token de autenticación
+
+    // Consulta a la colección de tarjetas del usuario
+    const tarjetasSnapshot = await db
+      .collection('users')
+      .doc(uid)
+      .collection('tarjetas')
+      .get();
+
+    // Si no se encuentran tarjetas para el usuario
+    if (tarjetasSnapshot.empty) {
+      return res.status(404).json({ message: 'No se encontraron tarjetas para este usuario' });
+    }
+
+    // Obtener las transacciones de cada tarjeta
+    const transaccionesPromises = tarjetasSnapshot.docs.map(async (tarjetaDoc) => {
+      const transaccionesSnapshot = await tarjetaDoc.ref.collection('transacciones').get();
+      return transaccionesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+
+    // Resolver las promesas de todas las tarjetas
+    const transacciones = await Promise.all(transaccionesPromises);
+
+    // Aplanar el array de transacciones
+    const transaccionesFlattened = transacciones.flat();
+
+    // Si no se encontraron transacciones
+    if (transaccionesFlattened.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron transacciones para estas tarjetas' });
+    }
+
+    return res.status(200).json({ transacciones: transaccionesFlattened });
+  } catch (error: any) {
+    console.error('Error en /tarjetas/transacciones:', error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
 
 // 3. Edit card alias
 app.put('/tarjetas/editar', async (req: Request, res: Response) => {
@@ -285,41 +341,61 @@ app.post('/tarjetas/recargar', async (req: Request, res: Response) => {
   }
 });
 
-// 5. Use card (save transaction)
+// 5. Use card (save transaction) con manejo de errores
 app.post('/tarjetas/usar', async (req: Request, res: Response) => {
   try {
     const uid = (req as any).uid;
     const { nfc_uid, saldo, estacion, hora } = req.body;
-    
+
+    // 1. Validar campos requeridos
     if (!nfc_uid || saldo == null || !estacion || !hora) {
       return res.status(400).json({ message: 'Campos requeridos faltantes' });
     }
-    
+
     const tarjetaRef = db
       .collection('users')
       .doc(uid)
       .collection('tarjetas')
       .doc(nfc_uid);
-      
-    // Deduct balance
+    
+    // 2. Obtener datos de la tarjeta
+    const tarjetaSnap = await tarjetaRef.get();
+    if (!tarjetaSnap.exists) {
+      return res.status(404).json({ message: 'Tarjeta no encontrada' });
+    }
+    const tarjeta = tarjetaSnap.data()!;  // ya sabemos que existe
+
+    // 3. Verificar estado de la tarjeta
+    if (!tarjeta.estado) {
+      return res.status(400).json({ message: 'La tarjeta está inactiva' });
+    }
+
+    // 4. Verificar saldo suficiente
+    if (tarjeta.saldo < saldo) {
+      return res.status(400).json({ message: 'Saldo insuficiente' });
+    }
+
+    // 5. Descontar saldo
     await tarjetaRef.update({
       saldo: admin.firestore.FieldValue.increment(-saldo),
     });
-    
-    // Record transaction
+
+    // 6. Registrar transacción
     await tarjetaRef.collection('transacciones').add({
-      saldo,
-      estacion,
-      hora,
+      saldo,       // monto usado
+      estacion,    // estación donde se usó
+      hora,        // hora reportada por el cliente
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
-    
+
     return res.status(200).json({ message: 'Uso de tarjeta registrado correctamente' });
   } catch (error: any) {
     console.error('Error en /tarjetas/usar:', error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: 'Error interno al procesar la transacción' });
   }
 });
+
+
 
 // Export Express app as Firebase Function
 export const api = functions.https.onRequest(app);

@@ -14,9 +14,16 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "permissions": [
+          "NFC"
+        ]
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.NFC"
+      ],
+      "package": "com.CorePlayground.MetroApp"
     },
     "web": {
       "bundler": "metro",
@@ -24,6 +31,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "react-native-nfc-manager",
       "expo-router",
       [
         "expo-splash-screen",
@@ -37,6 +45,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "13b8c16b-8aac-4bd6-aee5-23d480b0facd"
+      }
     }
   }
 }

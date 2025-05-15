@@ -12,13 +12,14 @@ const ProfileScreen = () => {
         const success = await logout();
         if (success) {
             Alert.alert('Sesión cerrada', 'Has cerrado sesión correctamente');
-            router.replace('./login');
+            router.replace('/login');
         } else {
             Alert.alert('Error', 'No se pudo cerrar la sesión');
         }
     };
 
     return (
+    <>
         <SafeAreaView style={styles.container}>
             <View style={styles.content}>
                 <Text style={styles.placeholderText}>Perfil</Text>
@@ -27,6 +28,7 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
+    </>
     );
 };
 

@@ -42,7 +42,8 @@ type FormData = {
 };
 
 // --- Main component ---
-const RegisterLoginScreen: React.FC = () => {
+const RegisterLoginScreen: React.FC = () => 
+{
   const router = useRouter();
   // Toggle between register and login tabs
   const [isRegister, setIsRegister] = useState<boolean>(true);
@@ -88,28 +89,54 @@ const RegisterLoginScreen: React.FC = () => {
   };
 
   // API calls
-  const registerUser = async (data: FormData): Promise<LoginResponse> => {
-    const response = await fetch('https://us-central1-metroapp-56fb6.cloudfunctions.net/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        username: data.username,
-        phoneNumber: data.phoneNumber
-      }),
-    });
+  // --- API calls con logging y captura de errores de red ---
+const registerUser = async (data: FormData): Promise<LoginResponse> => {
+  console.log('⏳ [registerUser] enviando datos:', data);
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Registration failed');
+  try {
+    const response = await fetch(
+      'https://us-central1-metroapp-56fb6.cloudfunctions.net/api/register',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          username: data.username,
+          phoneNumber: data.phoneNumber,
+        }),
+      }
+    );
+
+    console.log('⚙️ [registerUser] estado HTTP:', response.status);
+
+    let respJson;
+    try {
+      respJson = await response.json();
+      console.log('📥 [registerUser] respuesta del cuerpo:', respJson);
+    } catch (err) {
+      console.error('🛑 [registerUser] error al parsear JSON:', err);
+      throw new Error('Respuesta JSON inválida');
     }
 
-    return response.json();
-  };
+    if (!response.ok) {
+      throw new Error(respJson.message || 'Error al registrar usuario');
+    }
+
+    console.log('✅ [registerUser] registro exitoso');
+    return respJson;
+  } catch (err: any) {
+    console.error('🛑 [registerUser] ERROR:', err);
+    throw new Error(
+      err.message.includes('Network request failed')
+        ? 'No se pudo conectar con el servidor. Verifica tu conexión.'
+        : err.message
+    );
+  }
+};
+
+
 
   const loginUser = async (data: FormData): Promise<LoginResponse> => {
     const response = await fetch('https://us-central1-metroapp-56fb6.cloudfunctions.net/api/login', {
@@ -154,7 +181,7 @@ const RegisterLoginScreen: React.FC = () => {
         response = await loginUser(data);
         await saveSession(response.token, data.email);
         // Navigate to success screen
-        router.replace('/mainScreen');
+        router.replace('/(tabs)');
       }
     } catch (error) {
       Alert.alert(
@@ -191,7 +218,7 @@ const RegisterLoginScreen: React.FC = () => {
       // Verifica el resultado de la autenticación
       if (result.success) {
         // Si la autenticación es exitosa
-        router.replace('/mainScreen');
+        router.replace('/(tabs)');
       } else {
         // Si la autenticación falla
         Alert.alert('Error', 'La autenticación biométrica falló');
@@ -220,7 +247,7 @@ const RegisterLoginScreen: React.FC = () => {
         <View style={styles.container}>
           {/* Header image */}
           <Image
-            source={require('../assets/images/icon.png')}
+            source={require('../assets/images/metrologinimage.png')}
             style={styles.headerImage}
           />
 
@@ -259,6 +286,7 @@ const RegisterLoginScreen: React.FC = () => {
                 <View>
                   <TextInput
                     placeholder="Email"
+                    placeholderTextColor={'#000'}
                     style={[styles.input, errors.email && styles.inputError]}
                     keyboardType="email-address"
                     value={value}
@@ -282,6 +310,7 @@ const RegisterLoginScreen: React.FC = () => {
                     <View>
                       <TextInput
                         placeholder="Nombre completo"
+                        placeholderTextColor={'#000'}
                         style={[styles.input, errors.name && styles.inputError]}
                         value={value}
                         onChangeText={onChange}
@@ -301,6 +330,7 @@ const RegisterLoginScreen: React.FC = () => {
                     <View>
                       <TextInput
                         placeholder="Nombre de usuario"
+                        placeholderTextColor={'#000'}
                         style={[styles.input, errors.username && styles.inputError]}
                         value={value}
                         onChangeText={onChange}
@@ -320,6 +350,7 @@ const RegisterLoginScreen: React.FC = () => {
                     <View>
                       <TextInput
                         placeholder="Número de teléfono"
+                        placeholderTextColor={'#000'}
                         style={[styles.input, errors.phoneNumber && styles.inputError]}
                         keyboardType="phone-pad"
                         value={value}
@@ -348,14 +379,15 @@ const RegisterLoginScreen: React.FC = () => {
               render={({ field: { onChange, value } }) => (
                 <View>
                   <TextInput
-                    placeholder="Contraseña"
-                    style={[styles.input, errors.password && styles.inputError]}
-                    secureTextEntry
-                    value={value}
-                    onChangeText={onChange}
+                  placeholder="Contraseña"
+                  placeholderTextColor={'#000'}
+                  style={[styles.input, { color: '#000' }, errors.password && styles.inputError]}
+                  secureTextEntry
+                  value={value}
+                  onChangeText={onChange}
                   />
                   {errors.password && (
-                    <Text style={styles.errorText}>{errors.password.message}</Text>
+                  <Text style={styles.errorText}>{errors.password.message}</Text>
                   )}
                 </View>
               )}
