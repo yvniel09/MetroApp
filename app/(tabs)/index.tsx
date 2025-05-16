@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   Easing,
   Modal,
@@ -64,50 +65,64 @@ export default function RecargaScreen() {
   };
 
   const startNfc = async () => {
-    setLoadingNfc(true);
-    try {
-      const isSupported = await NfcManager.isSupported();
-      if (!isSupported) {
-        alert('⚠️ Este dispositivo no soporta NFC');
-        closeModal();
-        return;
-      }
-
-      await NfcManager.start();
-      await NfcManager.requestTechnology([NfcTech.Ndef]);
-
-      const tag = await NfcManager.getTag();
-      if (!tag?.id) throw new Error('No se detectó el UID del tag');
-
-      const uidHex = typeof tag.id === 'string'
-        ? tag.id.toUpperCase()
-        : (tag.id as number[])
-            .map(byte => byte.toString(16).padStart(2, '0'))
-            .join('')
-            .toUpperCase();
-
-      const token = await AsyncStorage.getItem('userToken');
-      await axios.post(
-        'https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/registrar',
-        {
-          nfc_uid: uidHex,
-          sobrenombre: `Tarjeta ${uidHex.slice(-4)}`,
-          estado: true,
-          saldo: 0,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      await cancelNfcScan();
-      setLoadingNfc(false);
-      setRefreshSignal(prev => prev + 1);
-      animateSuccess();
-    } catch (ex) {
-      console.warn(ex);
-      closeModal();
-      alert('⚠️ Error leyendo o registrando la tarjeta');
+  setLoadingNfc(true);
+  try {
+    const isSupported = await NfcManager.isSupported();
+    if (!isSupported) {
+      Alert.alert('⚠️ Este dispositivo no soporta NFC');
+      return closeModal();
     }
-  };
+
+    await NfcManager.start();
+    await NfcManager.requestTechnology([NfcTech.Ndef]);
+
+    const tag = await NfcManager.getTag();
+    if (!tag?.id) throw new Error('No se detectó el UID del tag');
+
+    const uidHex = typeof tag.id === 'string'
+      ? tag.id.toUpperCase()
+      : (tag.id as number[])
+          .map(byte => byte.toString(16).padStart(2, '0'))
+          .join('')
+          .toUpperCase();
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) throw new Error('No se encontró un token válido en AsyncStorage');
+
+    const payload = {
+      nfc_uid: uidHex,
+      sobrenombre: `Tarjeta ${uidHex.slice(-4)}`,
+      estado: true,
+      saldo: 0,
+    };
+
+    const { status, data } = await axios.post(
+      'https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/registrar',
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        validateStatus: status => status < 500,
+      }
+    );
+
+    if (status !== 201) {
+      throw new Error((data as { message?: string })?.message || `HTTP ${status}`);
+    }
+    
+
+    await cancelNfcScan();
+    setLoadingNfc(false);
+    setRefreshSignal(prev => prev + 1);
+    animateSuccess();
+  } catch (ex: any) {
+    console.warn(ex);
+    closeModal();
+    Alert.alert('⚠️ Error', ex.message || 'Error leyendo o registrando la tarjeta');
+  }
+};
 
   const onAddPress = () => {
     setModalVisible(true);

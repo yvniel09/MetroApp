@@ -20,13 +20,12 @@ export interface Tarjeta {
   estado: boolean; // true = activo, false = inactivo
 }
 
-// Añadimos un tipo para la UI
 interface TarjetaUI extends Tarjeta {
   estadoStr: 'activo' | 'inactivo';
 }
 
 interface TarjetasResponse {
-  tarjetas: Tarjeta[];
+  tarjetas?: Tarjeta[];
 }
 
 interface Props {
@@ -43,7 +42,7 @@ const CardList: React.FC<Props> = ({ refreshSignal }) => {
   const [aliasEdit, setAliasEdit] = useState('');
   const [montoRecarga, setMontoRecarga] = useState('');
 
-  // Fetch tarjetas y convertir estado
+  // 1) Obtener tarjetas del usuario
   const fetchTarjetas = async () => {
     setLoading(true);
     try {
@@ -52,18 +51,23 @@ const CardList: React.FC<Props> = ({ refreshSignal }) => {
         'https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas',
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const withStr: TarjetaUI[] = resp.data.tarjetas.map(t => ({
+      console.log('DEBUG fetchTarjetas response:', resp.data);
+
+      const lista = Array.isArray(resp.data.tarjetas) ? resp.data.tarjetas! : [];
+      const ui = lista.map<TarjetaUI>(t => ({
         ...t,
         estadoStr: t.estado ? 'activo' : 'inactivo',
       }));
-      setTarjetas(withStr);
+      setTarjetas(ui);
     } catch (e) {
       console.error('Error al obtener tarjetas:', e);
+      setTarjetas([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Un único useEffect
   useEffect(() => {
     fetchTarjetas();
   }, [refreshSignal]);
@@ -79,66 +83,60 @@ const CardList: React.FC<Props> = ({ refreshSignal }) => {
     setTarjetaSeleccionada(null);
   };
 
-  // Actualizar alias
+  // 2) EDITAR ALIAS
   const handleUpdate = async () => {
     if (!tarjetaSeleccionada) return;
     try {
       const token = await AsyncStorage.getItem('userToken');
       await axios.put(
         'https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/editar',
-        {
-          nfc_uid: tarjetaSeleccionada.id,
-          nuevo_alias: aliasEdit,
-        },
+        { nfc_uid: tarjetaSeleccionada.id, nuevo_alias: aliasEdit },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       await fetchTarjetas();
-      Alert.alert('Éxito', 'Alias actualizado correctamente');
+      Alert.alert('¡Éxito!', 'Alias actualizado correctamente');
       closeModal();
     } catch (error: any) {
       console.error('Error al actualizar alias:', error);
-      Alert.alert('Error', error?.response?.data?.message || 'No se pudo actualizar el alias.');
+      const msg =
+        error.response?.status === 404
+          ? 'Tarjeta no encontrada'
+          : error.response?.data?.message || 'No se pudo actualizar el alias.';
+      Alert.alert('Error', msg);
     }
   };
 
-  // Eliminar tarjeta
-const handleDelete = () => {
-  if (!tarjetaSeleccionada) return;
-
-  Alert.alert(
-    'Eliminar tarjeta',
-    '¿Seguro que quieres eliminar esta tarjeta?',
-    [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Eliminar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            const token = await AsyncStorage.getItem('userToken');
-            await axios.delete(
-              `https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/${tarjetaSeleccionada.id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-            await fetchTarjetas(); // Refrescar la lista después de eliminar
-            closeModal(); // Cerrar el modal
-          } catch (error) {
-            console.error('Error al eliminar tarjeta:', error);
-            Alert.alert('Error', 'No se pudo eliminar la tarjeta.');
-          }
+  // 3) ELIMINAR TARJETA
+  const handleDelete = () => {
+    if (!tarjetaSeleccionada) return;
+    Alert.alert(
+      'Eliminar tarjeta',
+      '¿Seguro que quieres eliminar esta tarjeta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('userToken');
+              await axios.delete(
+                `https://us-central1-metroapp-56fb6.cloudfunctions.net/api/tarjetas/${tarjetaSeleccionada.id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              await fetchTarjetas();
+              closeModal();
+            } catch (e) {
+              console.error('Error al eliminar tarjeta:', e);
+              Alert.alert('Error', 'No se pudo eliminar la tarjeta.');
+            }
+          },
         },
-      },
-    ]
-  );
-};
+      ]
+    );
+  };
 
-
-
-  // Recargar saldo
+  // 4) RECARGAR SALDO
   const handleRecarga = async () => {
     if (!tarjetaSeleccionada) return;
     const monto = parseFloat(montoRecarga);
@@ -156,7 +154,8 @@ const handleDelete = () => {
       await fetchTarjetas();
       Alert.alert('¡Éxito!', `Recargaste RD$${monto.toFixed(2)}.`);
       setMontoRecarga('');
-    } catch {
+    } catch (e) {
+      console.error('Error al recargar tarjeta:', e);
       Alert.alert('Error', 'No se pudo recargar la tarjeta.');
     }
   };
@@ -187,10 +186,9 @@ const handleDelete = () => {
           </TouchableOpacity>
         )}
         contentContainerStyle={{ padding: 16 }}
-        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        ListEmptyComponent={<Text style={styles.emptyText}>No tienes tarjetas</Text>}
       />
 
-      {/* Modal de administración */}
       <Modal animationType="slide" transparent visible={modalVisible} onRequestClose={closeModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
@@ -215,7 +213,7 @@ const handleDelete = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Editar alias */}
+            {/* Alias */}
             <View style={[styles.section, styles.editSection]}>
               <Text style={styles.subtitle}>Editar Alias</Text>
               <TextInput
@@ -233,9 +231,7 @@ const handleDelete = () => {
             {/* Eliminar */}
             <View style={[styles.section, styles.deleteSection]}>
               <Text style={styles.subtitle}>Eliminar Tarjeta</Text>
-              <Text style={styles.deleteWarning}>
-                Esta acción es irreversible.
-              </Text>
+              <Text style={styles.deleteWarning}>Esta acción es irreversible.</Text>
               <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={handleDelete}>
                 <Text style={styles.buttonText}>Eliminar Tarjeta</Text>
               </TouchableOpacity>
@@ -256,17 +252,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#4e54c8',
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
+    marginBottom: 16,
   },
   title: { fontSize: 18, fontWeight: 'bold', color: '#fff' },
   info: { fontSize: 16, color: '#fff', marginTop: 8 },
   estado: { marginTop: 8, fontWeight: '600' },
   activo: { color: '#0f0' },
   inactivo: { color: '#f00' },
+  emptyText: { textAlign: 'center', marginTop: 20, color: '#777' },
 
   modalOverlay: {
     flex: 1,
@@ -278,30 +271,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 20,
-    elevation: 10,
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  section: { marginBottom: 20 },
-  rechargeSection: {
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingTop: 16,
-  },
-  editSection: {
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingTop: 16,
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#333',
-  },
+  modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+  section: { marginVertical: 10 },
+  rechargeSection: { borderTopWidth: 1, borderTopColor: '#ddd', paddingTop: 10 },
+  editSection: { borderTopWidth: 1, borderTopColor: '#ddd', paddingTop: 10 },
+  deleteSection: { borderTopWidth: 1, borderTopColor: '#ddd', paddingTop: 10 },
+  subtitle: { fontSize: 18, fontWeight: '700', marginBottom: 6 },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -309,34 +285,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 12,
   },
-  button: {
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
+  button: { padding: 12, borderRadius: 12, alignItems: 'center', marginBottom: 6 },
   rechargeButton: { backgroundColor: '#28a745' },
   saveButton: { backgroundColor: '#4e54c8' },
-  deleteSection: {
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingTop: 16,
-  },
-  deleteWarning: {
-    color: '#b00020',
-    marginBottom: 12,
-    fontWeight: '600',
-  },
+  deleteWarning: { color: '#b00020', marginBottom: 6 },
   deleteButton: { backgroundColor: '#b00020' },
   buttonText: { color: '#fff', fontWeight: 'bold' },
-  closeButton: {
-    marginTop: 12,
-    alignSelf: 'center',
-    paddingVertical: 8,
-  },
-  closeText: {
-    color: '#888',
-    fontSize: 16,
-  },
+  closeButton: { marginTop: 10, alignSelf: 'center' },
+  closeText: { color: '#888' },
 });
 
 export default CardList;

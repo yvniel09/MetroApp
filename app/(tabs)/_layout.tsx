@@ -39,6 +39,16 @@ export default function TabsLayout() {
           tabBarLabel: 'Perfil', // Etiqueta explícita
         }}
       />
+      <Tabs.Screen
+        name="NFCtab"
+        options={{
+          title: 'Procesar pase',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="navigate-outline" size={size} color={color} />
+          ),
+          tabBarLabel: 'Recargar', // Etiqueta explícita
+        }}
+      />
     </Tabs>
   );
 }
