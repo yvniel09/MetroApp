@@ -83,7 +83,7 @@ const authMiddleware = async (
 ): Promise<void> => {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
-    res.status(401).json({ message: 'No autorizado' });
+    res.status(401).json({ status: 'denied', message: 'No autorizado' });
     return;
   }
   try {
@@ -93,7 +93,7 @@ const authMiddleware = async (
     return next();
   } catch (err: any) {
     console.error('Auth error:', err);
-    res.status(401).json({ message: 'Token inválido' });
+    res.status(401).json({ status: 'denied', message: 'Token inválido' });
     return;
   }
 };
@@ -137,7 +137,7 @@ app.post(
   }
 );
 
-// GET ALL CARDS (renombrado a `tarjetas`)
+// GET ALL CARDS
 app.get(
   '/tarjetas',
   async (req: Request, res: Response): Promise<Response> => {
@@ -149,7 +149,7 @@ app.get(
         .collection('tarjetas')
         .get();
       const tarjetas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      return res.json({ tarjetas });                // ← Aquí
+      return res.json({ tarjetas });
     } catch (err: any) {
       console.error('Get tarjetas error:', err);
       return res.status(500).json({ message: 'Error interno al listar tarjetas' });
@@ -209,7 +209,14 @@ app.post(
       await ref.update({
         saldo: admin.firestore.FieldValue.increment(saldo),
       });
-      return res.json({ message: 'Recarga exitosa' });
+      // Obtener el saldo actual después de la recarga
+      const tarjetaActualizada = await ref.get();
+      const nuevoSaldo = tarjetaActualizada.data()?.saldo || 0;
+      
+      return res.json({ 
+        message: 'Recarga exitosa', 
+        nuevoSaldo 
+      });
     } catch (err: any) {
       console.error('Recharge error:', err);
       return res
@@ -245,55 +252,91 @@ app.delete(
   }
 );
 
+// VERIFICAR TARJETA - ENDPOINT MEJORADO
+app.post(
+  '/tarjetas/verificar', 
+  async (req: Request, res: Response): Promise<Response> => {
+    const uid = (req as any).uid;
+    const { nfc_uid } = req.body;
 
-app.post('/tarjetas/verificar', authMiddleware, async (req: Request, res: Response): Promise<Response> => {
-  const uid = (req as any).uid;
-  const { nfc_uid } = req.body;
+    if (!nfc_uid) {
+      return res.status(400).json({ 
+        status: 'denied', 
+        message: 'Falta UID de la tarjeta', 
+        nuevoSaldo: 0 
+      });
+    }
 
-  if (!nfc_uid) {
-    return res.status(400).json({ status: 'denied', message: 'Falta UID de la tarjeta' });
+    try {
+      console.log(`Verificando tarjeta con UID: ${nfc_uid} para usuario: ${uid}`);
+      
+      const tarjetaRef = db
+        .collection('users')
+        .doc(uid)
+        .collection('tarjetas')
+        .doc(nfc_uid);
+      
+      const tarjetaDoc = await tarjetaRef.get();
+
+      if (!tarjetaDoc.exists) {
+        console.log(`Tarjeta ${nfc_uid} no encontrada para usuario ${uid}`);
+        return res.status(404).json({ 
+          status: 'denied', 
+          message: 'Tarjeta no encontrada', 
+          nuevoSaldo: 0 
+        });
+      }
+
+      const tarjeta = tarjetaDoc.data()!;
+      console.log(`Datos de tarjeta:`, tarjeta);
+      
+      const viajeCosto = 20;  // Costo del viaje en RDS
+
+      if (!tarjeta.estado) {
+        console.log(`Tarjeta ${nfc_uid} desactivada`);
+        return res.status(403).json({ 
+          status: 'denied', 
+          message: 'Tarjeta desactivada', 
+          nuevoSaldo: tarjeta.saldo 
+        });
+      }
+
+      if (tarjeta.saldo < viajeCosto) {
+        console.log(`Saldo insuficiente: ${tarjeta.saldo} < ${viajeCosto}`);
+        return res.status(403).json({ 
+          status: 'denied', 
+          message: 'Saldo insuficiente', 
+          nuevoSaldo: tarjeta.saldo 
+        });
+      }
+
+      const nuevoSaldo = tarjeta.saldo - viajeCosto;
+      console.log(`Nuevo saldo después de cobro: ${nuevoSaldo}`);
+
+      await tarjetaRef.update({ saldo: nuevoSaldo });
+
+      await tarjetaRef.collection('transacciones').add({
+        tipo: 'viaje',
+        monto: -viajeCosto,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      console.log(`Verificación exitosa para tarjeta ${nfc_uid}`);
+      return res.status(200).json({ 
+        status: 'ok', 
+        message: 'Viaje verificado', 
+        nuevoSaldo 
+      });
+    } catch (err: any) {
+      console.error('Error en verificarTarjeta:', err);
+      return res.status(500).json({ 
+        status: 'denied', 
+        message: 'Error del servidor', 
+        nuevoSaldo: 0 
+      });
+    }
   }
-
-  try {
-    const tarjetaDoc = await db
-      .collection('users')
-      .doc(uid)
-      .collection('tarjetas')
-      .doc(nfc_uid)
-      .get();
-
-    if (!tarjetaDoc.exists) {
-      return res.status(404).json({ status: 'denied', message: 'Tarjeta no encontrada' });
-    }
-
-    const tarjeta = tarjetaDoc.data()!;
-    const viajeCosto = 20;  // Cambio aquí a 20 RDS
-
-    if (!tarjeta.estado) {
-      return res.status(403).json({ status: 'denied', message: 'Tarjeta desactivada' });
-    }
-
-    if (tarjeta.saldo < viajeCosto) {
-      return res.status(403).json({ status: 'denied', message: 'Saldo insuficiente' });
-    }
-
-    const nuevoSaldo = tarjeta.saldo - viajeCosto;
-
-    await tarjetaDoc.ref.update({ saldo: nuevoSaldo });
-
-    await tarjetaDoc.ref.collection('transacciones').add({
-      tipo: 'viaje',
-      monto: -viajeCosto,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    return res.status(200).json({ status: 'ok', message: 'Viaje verificado', nuevoSaldo });
-  } catch (err: any) {
-    console.error('Error en verificarTarjeta:', err);
-    return res.status(500).json({ status: 'denied', message: 'Error del servidor' });
-  }
-});
-
+);
 
 // Export as Cloud Function
 export const api = functions.https.onRequest(app);
