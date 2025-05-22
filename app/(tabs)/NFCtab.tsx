@@ -54,7 +54,7 @@ export default function NFCTab() {
 
   // 2. Conexión WebSocket con ESP32
   useEffect(() => {
-    const ipEsp = '192.168.8.24:80'; // IP de tu ESP32
+    const ipEsp = '0.0.0.0:80'; // IP de tu ESP32 // puerto siempre va a ser 80
     ws.current = new WebSocket(`ws://${ipEsp}/ws`);
 
     ws.current.onopen = () => {
