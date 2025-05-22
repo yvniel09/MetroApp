@@ -338,5 +338,51 @@ app.post(
   }
 );
 
+// GET TRANSACCIONES DE UNA TARJETA
+app.get(
+  '/tarjetas/:nfc_uid/transacciones',
+  async (req: Request, res: Response): Promise<Response> => {
+    const uid = (req as any).uid;
+    const { nfc_uid } = req.params;
+
+    if (!nfc_uid) {
+      return res.status(400).json({ message: 'nfc_uid es requerido' });
+    }
+
+    try {
+      // Verificamos que la tarjeta existe
+      const tarjetaRef = db
+        .collection('users')
+        .doc(uid)
+        .collection('tarjetas')
+        .doc(nfc_uid);
+      const tarjetaDoc = await tarjetaRef.get();
+      if (!tarjetaDoc.exists) {
+        return res.status(404).json({ message: 'Tarjeta no encontrada' });
+      }
+
+      // Leemos la subcolección ordenada por timestamp descendente
+      const transSnap = await tarjetaRef
+        .collection('transacciones')
+        .orderBy('timestamp', 'desc')
+        .get();
+
+      const transacciones = transSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as { tipo: string; monto: number; timestamp: any }),
+      }));
+
+      return res.json({ transacciones });
+    } catch (err: any) {
+      console.error('Error al obtener transacciones:', err);
+      return res
+        .status(500)
+        .json({ message: 'Error interno al obtener transacciones' });
+    }
+  }
+);
+
+
+
 // Export as Cloud Function
 export const api = functions.https.onRequest(app);

@@ -54,7 +54,7 @@ export default function NFCTab() {
 
   // 2. Conexión WebSocket con ESP32
   useEffect(() => {
-    const ipEsp = '192.168.137.244:80'; // IP de tu ESP32
+    const ipEsp = '192.168.8.24:80'; // IP de tu ESP32
     ws.current = new WebSocket(`ws://${ipEsp}/ws`);
 
     ws.current.onopen = () => {
@@ -177,5 +177,6 @@ const styles = StyleSheet.create({
   messageBox:   { marginTop: 30, padding: 16, borderRadius: 12, width: '80%', alignItems: 'center' },
   successBox:   { backgroundColor: '#4caf50' },
   errorBox:     { backgroundColor: '#f44336' },
-  messageText:  { fontSize: 16, textAlign: 'center', color: '#fff' }
+  messageText:  { fontSize: 16, textAlign: 'center', color: '#fff' },
+   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 10, padding: 12, marginBottom: 15 }
 });
