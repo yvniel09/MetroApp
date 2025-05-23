@@ -7,6 +7,7 @@ You can see my video testing and showing the prototype:
 ### ENGLISH: https://youtu.be/FEpfXaH57qQ
 ### ESPAÑOL: https://youtube.com/shorts/X77WyyUxNfo
 # Get started
+- Remember to always download the development build APK on your phone or emulator.
 ```bash
   npm install
   cd MetroApp
